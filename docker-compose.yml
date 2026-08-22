@@ -1,0 +1,208 @@
+name: ecommerce
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+  rabbitmq-data:
+  redis-data:
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_password123"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    ports:
+      - "1433:1433" # host access for SSMS/Azure Data Studio — not required by the app itself
+    networks: [ecommerce-network]
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    networks: [ecommerce-network]
+    ports:
+    - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  redisinsight:
+    image: redis/redisinsight:latest
+    networks:
+      - ecommerce-network
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks: [ecommerce-network]
+    ports:
+      - "15672:15672" # management UI, useful for learning/debugging — not required in production
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  identity-service:
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+      Identity__SeedAdmin__Email: "${ADMIN_SEED_EMAIL:-}"
+      Identity__SeedAdmin__Password: "${ADMIN_SEED_PASSWORD:-}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [ecommerce-network]
+
+  product-service:
+    build:
+      context: .
+      dockerfile: src/Services/Product/Product.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [ecommerce-network]
+
+  customer-service:
+    build:
+      context: .
+      dockerfile: src/Services/Customer/Customer.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [ecommerce-network]
+
+  cart-service:
+    build:
+      context: .
+      dockerfile: src/Services/Cart/Cart.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+    depends_on:
+      redis:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+    networks: [ecommerce-network]
+
+  order-service:
+    build:
+      context: .
+      dockerfile: src/Services/Order/Order.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+    networks: [ecommerce-network]
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: src/Services/Payment/Payment.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+      # Razorpay test-mode credentials — set these in a root .env file (see .env.example);
+      # left blank the service still starts, but payment creation/verification calls will fail.
+      Razorpay__KeyId: "${RAZORPAY_KEY_ID:-}"
+      Razorpay__KeySecret: "${RAZORPAY_KEY_SECRET:-}"
+      Razorpay__WebhookSecret: "${RAZORPAY_WEBHOOK_SECRET:-}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [ecommerce-network]
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: src/Services/Notification/Notification.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      Jwt__SigningKey: "${JWT_SIGNING_KEY:-}"
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [ecommerce-network]
+
+  gateway:
+    build:
+      context: .
+      dockerfile: src/Gateway/ECommerce.ApiGateway/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+    ports:
+      - "5000:8080" # the only backend port exposed to the host, per §4/§14
+    depends_on:
+      - identity-service
+      - product-service
+      - customer-service
+      - cart-service
+      - order-service
+      - payment-service
+      - notification-service
+    networks: [ecommerce-network]
+
+  frontend:
+    build:
+      context: src/Frontend/ecommerce-web
+      dockerfile: Dockerfile
+      # Vite inlines env vars at build time, and the browser (not the container) calls the
+      # Gateway, so this must be the host-visible URL — the same one "ports:" exposes below.
+      args:
+        VITE_API_BASE_URL: http://localhost:5000
+    ports:
+      - "5173:80"
+    depends_on:
+      - gateway
+    networks: [ecommerce-network]

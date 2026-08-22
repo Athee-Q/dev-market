@@ -1,0 +1,51 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <!--
+    Central Package Management: every package version for the solution lives here, once.
+    Individual .csproj files reference packages by name only (<PackageReference Include="X" />) —
+    no Version attribute. To add or bump a package, edit this file only.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="AspNetCore.HealthChecks.Rabbitmq" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <!-- Internal service-to-service calls (Cart/Order → Product) — see the proto-owning
+         Product.Api/Protos/product.proto. Grpc.AspNetCore is server-side (Product.Api);
+         Grpc.Net.ClientFactory/Google.Protobuf/Grpc.Tools are client-side codegen + channel. -->
+    <PackageVersion Include="Google.Protobuf" Version="3.36.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.83.0" />
+    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.83.0" />
+    <PackageVersion Include="Grpc.Tools" Version="2.83.0" />
+    <!--
+      Pinned to the 8.x line deliberately: MassTransit went commercial-only starting v9 (April
+      2025, requires a paid SetLicense key). 8.5.10 is the latest free/Apache-2.0 release,
+      supported through at least end of 2026 — do not bump past 8.x without adding a license.
+    -->
+    <PackageVersion Include="MassTransit" Version="8.5.10" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.10" />
+    <!--
+      First-party ASP.NET Core auth middleware (MIT-licensed, ships on the ASP.NET Core release
+      cadence) — used by BuildingBlocks/Auth's AddJwtAuthentication, shared by every service that
+      validates the JWTs Identity Service issues.
+    -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.24.1-preview.1" />
+    <PackageVersion Include="Razorpay" Version="3.3.2" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.20" />
+    <PackageVersion Include="StackExchange.Redis" Version="3.1.13" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+  </ItemGroup>
+</Project>

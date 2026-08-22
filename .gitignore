@@ -1,0 +1,18 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+
+# Node / Vite
+node_modules/
+dist/
+src/Frontend/ecommerce-web/dist/
+.env.local
+
+# Secrets (Razorpay keys etc. — see .env.example)
+.env
+
+# Editor
+.vscode/
+.claude/

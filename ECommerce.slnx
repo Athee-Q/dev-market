@@ -1,0 +1,63 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/" />
+  <Folder Name="/src/BuildingBlocks/Application/">
+    <Project Path="src/BuildingBlocks/Application/ECommerce.BuildingBlocks.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/Auth/">
+    <Project Path="src/BuildingBlocks/Auth/ECommerce.BuildingBlocks.Auth.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/Contracts/">
+    <Project Path="src/BuildingBlocks/Contracts/ECommerce.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/WebApi/">
+    <Project Path="src/BuildingBlocks/WebApi/ECommerce.BuildingBlocks.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/src/Gateway/">
+    <Project Path="src/Gateway/ECommerce.ApiGateway/ECommerce.ApiGateway.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Cart/">
+    <Project Path="src/Services/Cart/Cart.Api/Cart.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Customer/">
+    <Project Path="src/Services/Customer/Customer.Api/Customer.Api.csproj" />
+    <Project Path="src/Services/Customer/Customer.Application/Customer.Application.csproj" />
+    <Project Path="src/Services/Customer/Customer.Domain/Customer.Domain.csproj" />
+    <Project Path="src/Services/Customer/Customer.Infrastructure/Customer.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/Identity.Api/Identity.Api.csproj" />
+    <Project Path="src/Services/Identity/Identity.Application/Identity.Application.csproj" />
+    <Project Path="src/Services/Identity/Identity.Domain/Identity.Domain.csproj" />
+    <Project Path="src/Services/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Notification/">
+    <Project Path="src/Services/Notification/Notification.Api/Notification.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Order/">
+    <Project Path="src/Services/Order/Order.Api/Order.Api.csproj" />
+    <Project Path="src/Services/Order/Order.Application/Order.Application.csproj" />
+    <Project Path="src/Services/Order/Order.Domain/Order.Domain.csproj" />
+    <Project Path="src/Services/Order/Order.Infrastructure/Order.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Payment/">
+    <Project Path="src/Services/Payment/Payment.Api/Payment.Api.csproj" />
+    <Project Path="src/Services/Payment/Payment.Application/Payment.Application.csproj" />
+    <Project Path="src/Services/Payment/Payment.Domain/Payment.Domain.csproj" />
+    <Project Path="src/Services/Payment/Payment.Infrastructure/Payment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Product/">
+    <Project Path="src/Services/Product/Product.Api/Product.Api.csproj" />
+    <Project Path="src/Services/Product/Product.Application/Product.Application.csproj" />
+    <Project Path="src/Services/Product/Product.Domain/Product.Domain.csproj" />
+    <Project Path="src/Services/Product/Product.Infrastructure/Product.Infrastructure.csproj" />
+  </Folder>
+</Solution>

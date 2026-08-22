@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+// Deliberately distinct from any Product.* C# namespace — no collision with our own
+// Product.Application.Abstractions.IProductCacheInvalidator etc., or with Cart/Order's own
+// IProductCatalogClient/ProductInfo types that adapt this generated client.
+option csharp_namespace = "ECommerce.Grpc.ProductCatalog";
+
+package productcatalog;
+
+// Internal, service-to-service product lookup — used by Cart (add-to-cart) and Order
+// (order-creation) to resolve current name/price/availability. Not exposed publicly; the Gateway's
+// REST API (GetProductById) is the public-facing equivalent and is unaffected by this contract.
+service ProductCatalog {
+  rpc GetProduct (GetProductRequest) returns (ProductReply);
+}
+
+message GetProductRequest {
+  string product_id = 1;
+}
+
+message ProductReply {
+  string id = 1;
+  string name = 2;
+  string price = 3;               // decimal-as-string, not double/float — avoids float corruption
+                                   // of money, matching decimal used everywhere else for prices.
+  bool is_active = 4;
+  string product_type = 5;        // plain string, mirrors Order's ProductInfo.ProductType (already
+                                   // a string, not an enum) — no enum-sync complexity to maintain.
+  optional string asset_url = 6;  // proto3 explicit presence — preserves nullable semantics.
+}

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" />
+    <PackageReference Include="Grpc.AspNetCore" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Product.Application\Product.Application.csproj" />
+    <ProjectReference Include="..\Product.Infrastructure\Product.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\WebApi\ECommerce.BuildingBlocks.WebApi.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Auth\ECommerce.BuildingBlocks.Auth.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Server side of the internal Cart/Order → Product gRPC contract — see the file's own comments. -->
+    <Protobuf Include="Protos\product.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+<Project>
+
+  <!--
+    Shared MSBuild properties for every project in the solution — set once here instead of
+    repeating the same PropertyGroup in all 20 .csproj files. A project can still override any
+    of these locally if it ever needs to.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\ECommerce.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      First-party Microsoft package (MIT-licensed, ships on the ASP.NET Core release cadence) —
+      not part of the Microsoft.AspNetCore.App shared framework itself, so it needs an explicit
+      PackageReference unlike most other auth middleware. No commercial-license trap here, unlike
+      MassTransit/MediatR.
+    -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+  </ItemGroup>
+
+</Project>
