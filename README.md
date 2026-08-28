@@ -352,7 +352,7 @@ ECommerce/
 
 Each Api project also has an `appsettings.Docker.json` that swaps `localhost` connection strings
 for Docker service names — loaded automatically when `ASPNETCORE_ENVIRONMENT=Docker` (set in
-`docker-compose.yml`).
+`docker-compose.yml`)
 
 ### Centralized build settings and package versions
 
